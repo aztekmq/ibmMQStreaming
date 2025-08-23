@@ -16,10 +16,6 @@ then configures **Streaming Queues** for **three** demos. Two Python processes r
 - `python/webapp_fastapi.py` — a FastAPI dashboard that **consumes ONLY the stream copies** and visualizes live rates via Server-Sent Events (SSE)
 
 ## Demos implemented
-1. **Real-Time Financial Transaction Auditing**  
-   Source: `APP.TXN.IN`  →  Stream: `AUDIT.TXN`
-
-
 ---
 
 ### 1) Real-Time Financial Transaction Auditing

@@ -1,8 +1,6 @@
 # ibmMQStreaming
 This project stands up **one IBM MQ queue manager in Docker** (using your provided `build_mq_qmgrs.sh`), then configures **Streaming Queues** for **three** demos. 
 
-awesome — below are **fully documented** files, ready to paste into the same folder layout. I added clear module/file headers (author, version, SPDX license), Google-style docstrings, typed signatures, usage notes, and inline comments while preserving behavior.
-
 ---
 
 ### `mq-streaming-demos/README.md`

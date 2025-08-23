@@ -1,0 +1,33 @@
+
+---
+
+### `mq-streaming-demos/mqsc/10-streaming-demo.mqsc`
+```mqsc
+* -----------------------------------------------------------------------------
+* File      : 10-streaming-demo.mqsc
+* Purpose   : Define source queues and their Streaming Queues for 3 demos.
+* Author    : rob lee
+* Version   : 1.1.0
+* License   : MIT (SPDX-License-Identifier: MIT)
+* Notes     : Uses STRMQOS(ATLEAST_ONCE) to duplicate messages for downstream
+*             consumers without changing the original producer/consumer code.
+* -----------------------------------------------------------------------------
+
+* Use case 1: Real-Time Financial Transaction Auditing
+DEFINE QLOCAL('APP.TXN.IN')     REPLACE DEFPSIST(YES) MAXDEPTH(50000) MAXMSGL(1048576) STREAMQ('AUDIT.TXN') STRMQOS(ATLEAST_ONCE)
+DEFINE QLOCAL('AUDIT.TXN')      REPLACE DEFPSIST(YES) MAXDEPTH(100000) MAXMSGL(1048576)
+
+* Use case 2: E-Commerce Order Processing Fork
+DEFINE QLOCAL('ORDERS.IN')      REPLACE DEFPSIST(YES) MAXDEPTH(50000) MAXMSGL(1048576) STREAMQ('PROMO.FEED') STRMQOS(ATLEAST_ONCE)
+DEFINE QLOCAL('PROMO.FEED')     REPLACE DEFPSIST(YES) MAXDEPTH(100000) MAXMSGL(1048576)
+
+* Use case 3: Retail Inventory Real-Time Sync
+DEFINE QLOCAL('INV.UPDATES')    REPLACE DEFPSIST(YES) MAXDEPTH(50000) MAXMSGL(1048576) STREAMQ('CENTRAL.SYNC') STRMQOS(ATLEAST_ONCE)
+DEFINE QLOCAL('CENTRAL.SYNC')   REPLACE DEFPSIST(YES) MAXDEPTH(100000) MAXMSGL(1048576)
+
+* Optional hygiene (uncomment and adapt):
+* ALTER QMGR MONQ(MEDIUM) MONCHL(MEDIUM)
+* DEFINE QLOCAL('QM1.DLQ') REPLACE
+* ALTER QMGR DEADQ('QM1.DLQ')
+
+END

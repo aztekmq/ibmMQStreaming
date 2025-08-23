@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# Script Name : destroy_mq_qmgrs.sh
+# Script Name : mq_destroy_qmgr_container.sh
 # Description : Lists Docker containers and prompts the user to select ones to
 #               delete.
 # Author      : rob lee
@@ -18,7 +18,7 @@
 #   - Container metadata aligns with OCI/Docker Compose format 3.8.
 #
 # Usage:
-#   ./destroy_mq_qmgrs.sh
+#   ./mq_destroy_qmgr_container.sh
 #
 # Behavior Summary:
 #   1) Lists existing Docker containers.

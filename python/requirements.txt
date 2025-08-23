@@ -1,0 +1,8 @@
+# -----------------------------------------------------------------------------
+# Dependencies for producer and FastAPI SSE web dashboard
+# Maintainer: rob lee • License: MIT
+# -----------------------------------------------------------------------------
+pymqi==1.13.1
+python-dotenv==1.0.1
+fastapi==0.112.2
+uvicorn==0.30.6

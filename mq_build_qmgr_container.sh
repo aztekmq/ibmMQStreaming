@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# Script Name : mq_build_qmgr.sh
+# Script Name : mq_build_qmgr_container.sh
 # Description : Provision N IBM MQ queue managers as Docker containers, with
 #               Admin Web Console and REST Admin endpoints exposed. Generates
 #               a docker-compose.yml and starts the services.
@@ -20,10 +20,10 @@
 #   - Container metadata aligns with OCI/Docker Compose format 3.8.
 #
 # Usage:
-#   ./mq_build_qmgr.sh <number_of_qmgrs>
+#   ./mq_build_qmgr_container.sh <number_of_qmgrs>
 #
 #   Example:
-#     ./mq_build_qmgr.sh 3
+#     ./mq_build_qmgr_container.sh 3
 #
 # Behavior Summary:
 #   1) Validates the numeric argument (N >= 1).

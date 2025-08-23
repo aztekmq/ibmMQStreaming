@@ -52,7 +52,22 @@
 #     behavior. If you adopt it, test thoroughly in your environment.
 #   - Recommended linting with ShellCheck: https://www.shellcheck.net/
 # =============================================================================
- 
+
+usage() {
+  cat <<EOF
+Usage: $0 <number_of_qmgrs>
+
+Provision one or more IBM MQ queue managers as Docker containers.
+
+Arguments:
+  number_of_qmgrs  Positive integer specifying how many queue manager
+                   instances to create.
+
+Example:
+  $0 3
+EOF
+}
+
 # --------- CONFIG ---------
 # Number of queue managers to create; required positional argument.
 NUM_QMGRS="$1"
@@ -74,11 +89,18 @@ GREEN="\033[0;32m"
 YELLOW="\033[0;33m"
 CYAN="\033[0;36m"
 NC="\033[0m" # No Color
- 
+
 # --------- Validation ---------
+# Display usage and exit on -h/--help.
+if [[ "$NUM_QMGRS" == "-h" || "$NUM_QMGRS" == "--help" ]]; then
+  usage
+  exit 0
+fi
+
 # Validate that NUM_QMGRS is a non-empty, positive integer.
-if [[ -z "$NUM_QMGRS" || ! "$NUM_QMGRS" =~ ^[0-9]+$ ]]; then
-  echo -e "${RED}❌ Usage: $0 <number_of_qmgrs>${NC}"
+if [[ -z "$NUM_QMGRS" || ! "$NUM_QMGRS" =~ ^[1-9][0-9]*$ ]]; then
+  echo -e "${RED}Error: missing or invalid <number_of_qmgrs>.${NC}\n"
+  usage
   exit 1
 fi
  
@@ -201,7 +223,7 @@ echo ""
 echo -e "${CYAN}👉 To connect to a container: ${NC}"
 echo -e "${CYAN}docker exec -it <container_name> bash${NC}"
 echo ""
- 
+
 # =============================================================================
 # End of file
 # =============================================================================

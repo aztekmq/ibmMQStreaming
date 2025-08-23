@@ -5,7 +5,6 @@ This project stands up **one IBM MQ queue manager in Docker** (using your provid
 
 ### `mq-streaming-demos/README.md`
 
-````markdown
 # IBM MQ Streaming Queue Demos (3 use cases)
 
 **Author:** rob lee • **License:** MIT • **Version:** 1.1.0

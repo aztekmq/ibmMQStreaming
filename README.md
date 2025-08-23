@@ -19,7 +19,6 @@ then configures **Streaming Queues** for **three** demos. Two Python processes r
 1. **Real-Time Financial Transaction Auditing**  
    Source: `APP.TXN.IN`  →  Stream: `AUDIT.TXN`
 
-here you go — three **separate Mermaid diagrams**, one per demo. you can paste each block into your README or any markdown doc that renders Mermaid.
 
 ---
 
@@ -36,8 +35,9 @@ flowchart LR
   classDef qstream fill:#F0FFF4,stroke:#2F855A,stroke-width:1px;
 
   %% ===== Nodes =====
-  P[Banking App Producer<br/>(producer.py)]:::ext
-  WEB[Audit Dashboard (SSE)<br/>(webapp_fastapi.py)]:::ext
+  P["Banking App Producer\n(producer.py)"]:::ext
+
+  WEB["Audit Dashboard (SSE)\n(webapp_fastapi.py)"]:::ext
 
   subgraph MQ["IBM MQ Container : QM1"]
     APP["APP.TXN.IN<br/>(source queue)"]:::qsrc
@@ -66,8 +66,9 @@ flowchart LR
   classDef qstream fill:#F0FFF4,stroke:#2F855A,stroke-width:1px;
 
   %% ===== Nodes =====
-  P[Storefront / Order Producer<br/>(producer.py)]:::ext
-  WEB[Promotions Dashboard (SSE)<br/>(webapp_fastapi.py)]:::ext
+  P["Storefront / Order Producer\n(producer.py)"]:::ext
+
+  WEB["Promotions Dashboard (SSE)\n(webapp_fastapi.py)"]:::ext
 
   subgraph MQ["IBM MQ Container : QM1"]
     ORD["ORDERS.IN<br/>(source queue)"]:::qsrc
@@ -96,12 +97,12 @@ flowchart LR
   classDef qstream fill:#F0FFF4,stroke:#2F855A,stroke-width:1px;
 
   %% ===== Nodes =====
-  P[Store Devices / Inventory Producer<br/>(producer.py)]:::ext
-  WEB[Central Sync Dashboard (SSE)<br/>(webapp_fastapi.py)]:::ext
+  P["Store Devices / Inventory Producer\n(producer.py)"]:::ext
+  WEB["Central Sync Dashboard (SSE)\n(webapp_fastapi.py)"]:::ext
 
   subgraph MQ["IBM MQ Container : QM1"]
-    INV["INV.UPDATES<br/>(source queue)"]:::qsrc
-    SYNC["CENTRAL.SYNC<br/>(stream queue)"]:::qstream
+    INV["INV.UPDATES\n(source queue)"]:::qsrc
+    SYNC["CENTRAL.SYNC\n(stream queue)"]:::qstream
   end
   class MQ mq
 
@@ -110,15 +111,6 @@ flowchart LR
   INV -->|"STREAMQ('CENTRAL.SYNC')\nSTRMQOS(ATLEAST_ONCE)"| SYNC
   SYNC -->|"GET (duplicate msgs)"| WEB
 ```
-
-> tip: if your renderer doesn’t support Mermaid subgraph styling, the diagrams still work—the class/style lines simply get ignored.
-
-
-2. **E-Commerce Order Processing Fork**  
-   Source: `ORDERS.IN`    →  Stream: `PROMO.FEED`
-
-3. **Retail Inventory Real-Time Sync**  
-   Source: `INV.UPDATES`  →  Stream: `CENTRAL.SYNC`
 
 All three use **`STREAMQ(...) STRMQOS(ATLEAST_ONCE)`** so original apps are unaffected while the dashboard reads duplicates.
 

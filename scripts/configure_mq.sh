@@ -28,6 +28,11 @@ usage() {
   echo "Usage: $0 [--qmgr QM1] [--container qm1] [--mqsc /path/to/file.mqsc]"
 }
 
+if [[ $# -eq 0 ]]; then
+  usage
+  exit 0
+fi
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --qmgr) QMGR="$2"; shift 2;;

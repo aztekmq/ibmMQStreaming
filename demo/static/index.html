@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>IBM MQ Streaming Demo</title>
+  <style>
+    body { display: flex; font-family: Arial, sans-serif; margin: 0; height: 100vh; }
+    #studio, #living-room { flex: 1; position: relative; }
+    #studio { background: #eef; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    #building { width: 200px; height: 200px; background: #666; position: relative; }
+    #building:after { content: ''; position: absolute; top: -80px; left: 95px; width: 10px; height: 80px; background: #333; }
+    #wheel { width: 180px; height: 180px; border-radius: 50%; border: 4px solid #333; position: absolute; top: 10px; left: 10px; }
+    #pointer { width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-bottom: 30px solid red; position: absolute; top: -40px; left: 70px; }
+    #spin { margin-top: 220px; padding: 10px 20px; }
+    #incoming { display: none; position: absolute; bottom: 10px; right: 10px; width: 20px; height: 20px; border-radius: 50%; background: orange; animation: pulse 1s infinite; }
+    @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
+    #living-room { background: #f8f8f8; display: flex; align-items: center; justify-content: center; }
+    #tv { width: 560px; height: 315px; border: 10px solid #000; background: #000; }
+    #metrics { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.8); padding: 10px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div id="studio">
+    <div id="building">
+      <div id="wheel"></div>
+      <div id="pointer"></div>
+    </div>
+    <button id="spin">Spin</button>
+    <div id="incoming"></div>
+  </div>
+  <div id="living-room">
+    <div id="metrics">Waiting for video...</div>
+    <iframe id="tv" src="" allow="autoplay"></iframe>
+  </div>
+
+<script>
+const slices = [
+  { label: 'Music 1', category: 'Music', url: 'https://www.youtube.com/watch?v=5qap5aO4i9A' },
+  { label: 'Music 2', category: 'Music', url: 'https://www.youtube.com/watch?v=jfKfPfyJRdk' },
+  { label: 'Documentary', category: 'Documentary', url: 'https://www.youtube.com/watch?v=3uYlQf2zF2c' },
+  { label: 'Tech Talk', category: 'Technology', url: 'https://www.youtube.com/watch?v=Vhh_GeBPOhs' },
+  { label: 'Comedy', category: 'Entertainment', url: 'https://www.youtube.com/watch?v=d-diB65scQU' },
+  { label: 'Wildlife', category: 'Nature', url: 'https://www.youtube.com/watch?v=aqz-KE-bpKQ' }
+];
+const wheel = document.getElementById('wheel');
+const spinBtn = document.getElementById('spin');
+const incoming = document.getElementById('incoming');
+const metrics = document.getElementById('metrics');
+let spinning = false;
+
+function drawWheel() {
+  const ctx = wheel.getContext ? wheel.getContext('2d') : null;
+  if (!ctx) return;
+  const sliceAngle = 2 * Math.PI / slices.length;
+  slices.forEach((slice, i) => {
+    ctx.beginPath();
+    ctx.moveTo(90, 90);
+    ctx.arc(90, 90, 90, i * sliceAngle, (i + 1) * sliceAngle);
+    ctx.closePath();
+    ctx.fillStyle = i % 2 ? '#ccc' : '#eee';
+    ctx.fill();
+    ctx.save();
+    ctx.translate(90, 90);
+    ctx.rotate(i * sliceAngle + sliceAngle / 2);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#000';
+    ctx.font = '12px sans-serif';
+    ctx.fillText(slice.label, 85, 5);
+    ctx.restore();
+  });
+}
+
+drawWheel();
+
+spinBtn.addEventListener('click', () => {
+  if (spinning) return;
+  spinning = true;
+  const sliceAngle = 360 / slices.length;
+  const choice = Math.floor(Math.random() * slices.length);
+  const rotation = 360 * 5 + (slices.length - choice) * sliceAngle;
+  wheel.style.transition = 'transform 4s ease-out';
+  wheel.style.transform = `rotate(${rotation}deg)`;
+  incoming.style.display = 'block';
+  setTimeout(() => {
+    const selected = slices[choice];
+    fetch('/spin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(selected)
+    });
+    spinning = false;
+  }, 4000);
+});
+
+function toEmbed(url) {
+  const id = url.split('v=')[1];
+  return `https://www.youtube.com/embed/${id}?autoplay=1`;
+}
+
+const ws = new WebSocket(`ws://${location.host}/ws`);
+ws.onmessage = evt => {
+  incoming.style.display = 'none';
+  const data = JSON.parse(evt.data);
+  document.getElementById('tv').src = toEmbed(data.url);
+  const sent = new Date(data.sent_at * 1000).toLocaleTimeString();
+  const recv = new Date(data.received_at * 1000).toLocaleTimeString();
+  metrics.textContent = `Category: ${data.category} | Sent: ${sent} | Received: ${recv} | Latency: ${data.latency.toFixed(2)}s`;
+};
+</script>
+</body>
+</html>
